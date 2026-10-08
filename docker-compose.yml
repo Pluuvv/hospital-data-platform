@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: hospital-pg
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: hospital_dw
+    ports:
+      - "5433:5432"   # 5433 on host because 5432 was already in use
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
