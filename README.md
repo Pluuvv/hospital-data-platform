@@ -1,275 +1,132 @@
-# 🏥 Hospital Data Pipeline
+# Hospital Data Pipeline
 
-> **End-to-end Data Engineering pipeline** untuk sistem data warehouse rumah sakit — mulai dari raw CSV hingga KPI mart yang siap divisualisasi.
-
----
-
-## 📌 Latar Belakang
-
-Sistem SIMRS (Sistem Informasi Manajemen Rumah Sakit) menghasilkan data kunjungan pasien dalam jumlah besar. Project ini membangun pipeline ETL yang mengubah data mentah tersebut menjadi **data warehouse berbasis dimensional model (Star Schema)**, kemudian menghasilkan **data mart KPI** untuk kebutuhan analitik operasional rumah sakit seperti:
-
-- Tren kunjungan pasien per bulan
-- Pendapatan per penyedia asuransi
-- Waktu tunggu rata-rata per tipe admisi
-- Tingkat okupansi tempat tidur harian
+End-to-end ETL pipeline that transforms raw hospital admission records into a dimensional data warehouse and KPI data marts for operational analytics.
 
 ---
 
-## 🏗️ Arsitektur Pipeline
+## Architecture
 
 ```
-Raw Data (CSV)
-     │
-     ▼
-┌─────────────────┐
-│  STAGING Layer  │  ← Load as-is, no transformation
-│  stg.healthcare │
-│      _raw       │
-└────────┬────────┘
-         │  Cleanse & Deduplicate
-         ▼
-┌──────────────────────────────────────────┐
-│          DATA WAREHOUSE Layer            │
-│            (Star Schema)                 │
-│                                          │
-│  dim_date   dim_patient  dim_condition   │
-│  dim_admission_type  dim_insurance       │
-│                                          │
-│           fact_kunjungan                 │
-└────────────────┬─────────────────────────┘
-                 │  Aggregate & Compute KPIs
-                 ▼
-┌──────────────────────────────────────────┐
-│            DATA MART Layer               │
-│                                          │
-│  mart.kpi_kunjungan_bulanan              │
-│  mart.kpi_pendapatan_bulanan             │
-│  mart.kpi_waktu_tunggu                   │
-│  mart.kpi_okupansi_harian                │
-└──────────────────────────────────────────┘
-         │
-         ▼
-   Dashboard / BI Tool (Looker Studio)
+CSV (raw)
+  └─► stg.healthcare_raw          Staging — load as-is
+        └─► dw.dim_*              Dimensions (date, patient, condition,
+            dw.fact_kunjungan       admission type, insurance)
+              └─► mart.kpi_*      Aggregated KPI tables
 ```
+
+**Stack:** PostgreSQL 16 · Pentaho PDI · Python (pandas, SQLAlchemy) · Docker · Looker Studio
 
 ---
 
-## 🛠️ Tech Stack
+## ETL Flow
 
-| Komponen | Teknologi |
-|---|---|
-| Database | PostgreSQL 16 (via Docker) |
-| ETL Orkestrasi | Pentaho Data Integration (PDI/Kettle) |
-| Data Mart Build | Python (pandas, SQLAlchemy, psycopg2) |
-| Containerisasi | Docker & Docker Compose |
-| Visualisasi | Looker Studio |
-| Environment | Python 3.13 + virtualenv |
+The pipeline is orchestrated by a single PDI job (`00_main.kjb`) that runs three transformations in sequence.
 
----
-
-## 📂 Struktur Project
-
-```
-hospital-pipeline/
-├── 00_main.kjb                  # PDI Job utama (orkestrasi)
-├── 01_load_staging.ktr          # PDI Transform: CSV → Staging
-├── 02_load_dimensions.ktr       # PDI Transform: Staging → Dimensi DW
-├── 03_load_fact.ktr             # PDI Transform: Staging → Fact Table
-├── docker-compose.yml           # PostgreSQL container
-├── dw_schema.sql                # DDL schema Data Warehouse
-├── etl/
-│   ├── schema.sql               # DDL lengkap (stg + dw)
-│   └── build_mart.py           # Script Python build KPI mart
-├── sql/
-│   └── stg_simrs.sql           # DDL staging SIMRS
-├── data/
-│   └── raw/
-│       └── healthcare_dataset.csv  # Data sumber (55.500 baris)
-├── docs/
-│   ├── kpi_kunjungan_bulanan.csv
-│   ├── kpi_pendapatan_bulanan.csv
-│   ├── kpi_waktu_tunggu.csv
-│   ├── kpi_okupansi_harian.csv
-│   ├── rejected_billing_negatif.csv  # Data quality log
-│   └── looker/                  # CSV export untuk Looker Studio
-└── logs/
-    └── job_m3.log              # Log eksekusi PDI job
-```
-
----
-
-## 📊 Data & KPI
-
-### Dataset Sumber
-- **File:** `healthcare_dataset.csv`
-- **Volume:** 55.500 baris raw → 54.860 baris valid
-- **Periode:** Mei 2019 – Agustus 2024
-- **Data Rejected:** 108 baris (billing_amount < 0 → masuk `rejected_billing_negatif.csv`)
-
-### Schema Data Warehouse
-
-**Dimensi:**
-| Tabel | Baris | Deskripsi |
-|---|---|---|
-| `dw.dim_date` | 1.888 | Kalender lengkap dengan atribut waktu |
-| `dw.dim_patient` | 54.944 | Profil pasien unik |
-| `dw.dim_condition` | 6 | Kondisi medis (Arthritis, Asthma, Cancer, dll.) |
-| `dw.dim_admission_type` | 3 | Elective, Emergency, Urgent |
-| `dw.dim_insurance` | 5 | Aetna, Blue Cross, Cigna, Medicare, UnitedHealthcare |
-
-**Fakta:**
-| Tabel | Baris | Total Billing |
-|---|---|---|
-| `dw.fact_kunjungan` | 54.860 | \$1.404.121.599,97 |
-
-### KPI Mart Output
-
-| Mart Table | Baris | Deskripsi |
-|---|---|---|
-| `mart.kpi_kunjungan_bulanan` | 1.098 | Kunjungan per bulan, tipe admisi, kondisi medis |
-| `mart.kpi_pendapatan_bulanan` | 305 | Pendapatan per bulan & asuransi |
-| `mart.kpi_waktu_tunggu` | 183 | Total menit tunggu per bulan & tipe admisi |
-| `mart.kpi_okupansi_harian` | 1.797 | Okupansi harian (avg ~77,58%) |
-
----
-
-## 🚀 Cara Menjalankan
-
-### Prerequisites
-- Docker Desktop (running)
-- Python 3.10+ dengan virtualenv
-- Pentaho Data Integration 9.x (untuk `.ktr`/`.kjb`)
-
-### 1. Jalankan Database
-
-```bash
-docker compose up -d
-```
-
-Ini akan menjalankan PostgreSQL 16 di port `5433` dengan:
-- Database: `hospital_dw`
-- User: `postgres`
-- Password: `postgres123`
-
-### 2. Setup Python Environment
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate        # Windows
-pip install pandas sqlalchemy psycopg2-binary
-```
-
-### 3. Inisialisasi Schema
-
-```bash
-docker exec -i hospital-pg psql -U postgres -d hospital_dw < etl/schema.sql
-```
-
-### 4. Jalankan ETL Pipeline (Pentaho)
-
-Buka Pentaho Spoon, lalu jalankan `00_main.kjb`. Job ini secara berurutan menjalankan:
-1. `01_load_staging.ktr` — Load CSV ke staging
-2. `02_load_dimensions.ktr` — Populate dimensi DW
-3. `03_load_fact.ktr` — Populate fact table
-
-### 5. Build KPI Mart
-
-```bash
-python etl/build_mart.py
-```
-
-Output: 4 tabel di schema `mart` + CSV export di `docs/looker/`
-
-### 6. Verifikasi Data
-
-```bash
-docker exec hospital-pg psql -U postgres -d hospital_dw -c "
-SELECT 'stg'            AS layer, count(*) FROM stg.healthcare_raw
-UNION ALL SELECT 'fact', count(*) FROM dw.fact_kunjungan
-UNION ALL SELECT 'mart_kunjungan', count(*) FROM mart.kpi_kunjungan_bulanan;"
-```
-
----
-
-## 🔍 Data Quality
-
-Pipeline menerapkan beberapa rules data quality:
-
-| Rule | Penanganan |
-|---|---|
-| `billing_amount < 0` | Di-reject ke `rejected_billing_negatif.csv` (108 baris) |
-| Duplikat pasien | Deduped menggunakan `UNIQUE INDEX` pada `(name, age, gender, blood_type)` |
-| NULL pada FK | Validasi post-load: `0 null keys` dari 54.860 baris |
-| Length of Stay | Dikompute dari `discharge_date - date_of_admission` (range: 1–30 hari) |
-| Wait Minutes | Di-generate deterministik dari `admission_id` |
-
----
-
-## 📈 Key Insights
-
-- **Total Pendapatan:** \$1,4 Miliar (periode 2019–2024)
-- **Rata-rata Waktu Tunggu:** ~59,6 menit per kunjungan
-- **Rata-rata Okupansi:** ~77,58% (asumsi kapasitas 600 tempat tidur)
-- **Distribusi Tipe Admisi:** Elective / Emergency / Urgent merata
-- **Top Kondisi Medis:** Arthritis, Asthma, Cancer, Diabetes, Hypertension, Obesity
-
----
-
-## 📸 Dashboard Preview
-
-> 🔗 **Live Dashboard:** [Buka di Looker Studio](https://lookerstudio.google.com/LINK-DASHBOARD-LO-DI-SINI)
-
-| Overview KPI | Tren Kunjungan |
-|---|---|
-| ![Overview KPI](docs/screenshots/dashboard_overview.png) | ![Tren Kunjungan](docs/screenshots/dashboard_kunjungan.png) |
-
-| Pendapatan per Asuransi | Okupansi Harian |
-|---|---|
-| ![Pendapatan](docs/screenshots/dashboard_pendapatan.png) | ![Okupansi](docs/screenshots/dashboard_okupansi.png) |
-
-> 📌 *Ganti link dan screenshot di atas dengan yang asli setelah dashboard selesai dibuat.*
-
----
-
-## ⚙️ PDI ETL Flow
-
-Pipeline dibangun menggunakan **Pentaho Data Integration (Kettle)** dengan 1 Job utama yang mengorkestrasikan 3 Transformation secara berurutan.
-
-### `00_main.kjb` — Master Job
+### `00_main.kjb`
 ![PDI Main Job](docs/screenshots/pdi_00_main_job.png)
 
-### `01_load_staging.ktr` — CSV → Staging
-Membaca raw CSV dan meload ke `stg.healthcare_raw` as-is tanpa transformasi.
+### `01_load_staging.ktr` — Raw load
+Reads `healthcare_dataset.csv` and loads all 55,500 rows into `stg.healthcare_raw` without any transformation. Preserves dirty data for auditability.
 
 ![PDI Load Staging](docs/screenshots/pdi_01_load_staging.png)
 
-### `02_load_dimensions.ktr` — Staging → Dimensi DW
-Populate 5 tabel dimensi: `dim_date`, `dim_patient`, `dim_condition`, `dim_admission_type`, `dim_insurance`. Menggunakan **Lookup** dan **Insert/Update** step untuk handle SCD Type 1.
+### `02_load_dimensions.ktr` — Dimension population
+Populates five dimension tables from staging using Lookup + Insert/Update steps (SCD Type 1).
 
 ![PDI Load Dimensions](docs/screenshots/pdi_02_load_dimensions.png)
 
-### `03_load_fact.ktr` — Staging → Fact Table
-Join semua dimensi, filter billing negatif, hitung `length_of_stay`, lalu insert ke `fact_kunjungan`.
+### `03_load_fact.ktr` — Fact load
+Joins all dimension keys, filters out negative billing rows (rejected to `docs/rejected_billing_negatif.csv`), computes `length_of_stay`, and inserts into `fact_kunjungan`.
 
 ![PDI Load Fact](docs/screenshots/pdi_03_load_fact.png)
 
 ---
 
-## 📝 Catatan Desain
+## Schema
 
-- **Staging Layer** menyimpan data as-is dari sumber (termasuk yang dirty) untuk auditability
-- **wait_minutes** di-generate karena dataset asli tidak memiliki data waktu tunggu
-- **Kapasitas bed (600)** adalah asumsi karena dataset tidak menyertakan data kapasitas rumah sakit
-- **Okupansi** dihitung dari kumulatif pasien yang masuk dikurangi yang keluar per hari
+```sql
+-- Dimensions
+dw.dim_date            (date_key, full_date, year, quarter, month, ...)
+dw.dim_patient         (patient_key, name, age, gender, blood_type)
+dw.dim_condition       (condition_key, medical_condition)
+dw.dim_admission_type  (admission_type_key, admission_type)
+dw.dim_insurance       (insurance_key, insurance_provider)
+
+-- Fact
+dw.fact_kunjungan      (admission_id, patient_key, admission_date_key,
+                         discharge_date_key, condition_key, admission_type_key,
+                         insurance_key, length_of_stay, wait_minutes, billing_amount, ...)
+
+-- Mart (built by etl/build_mart.py)
+mart.kpi_kunjungan_bulanan    -- visits by month / type / condition
+mart.kpi_pendapatan_bulanan   -- revenue by month / insurance provider
+mart.kpi_waktu_tunggu         -- wait time aggregates by month / type
+mart.kpi_okupansi_harian      -- daily bed occupancy
+```
 
 ---
 
-## 👩‍💻 Author
+## Data Summary
 
-**Rizkya Permata**  
-Data Engineering — Semester 5  
-Universitas [Nama Universitas]
+| Layer | Table | Rows |
+|---|---|---|
+| Staging | `stg.healthcare_raw` | 55,500 |
+| DW | `dw.fact_kunjungan` | 54,860 |
+| DW | `dw.dim_patient` | 54,944 |
+| DW | `dw.dim_date` | 1,888 |
+| DW | `dw.dim_condition` | 6 |
+| DW | `dw.dim_admission_type` | 3 |
+| DW | `dw.dim_insurance` | 5 |
+| Mart | `kpi_kunjungan_bulanan` | 1,098 |
+| Mart | `kpi_pendapatan_bulanan` | 305 |
+| Mart | `kpi_waktu_tunggu` | 183 |
+| Mart | `kpi_okupansi_harian` | 1,797 |
+
+**Period:** May 2019 – Aug 2024  
+**Rejected:** 108 rows (negative billing amount)  
+**Total billing:** $1,404,121,599.97  
+**Avg bed occupancy:** 77.58% (assumed capacity: 600 beds)
 
 ---
 
-> *"Turn raw data into actionable insights."*
+## Dashboard
+
+> Live: [Looker Studio](https://lookerstudio.google.com/LINK-DASHBOARD-LO-DI-SINI)
+
+![Dashboard Overview](docs/screenshots/dashboard_overview.png)
+
+---
+
+## Running Locally
+
+**Prerequisites:** Docker Desktop, Python 3.10+, Pentaho Spoon 9.x
+
+```bash
+# 1. Start database
+docker compose up -d
+
+# 2. Init schema
+docker exec -i hospital-pg psql -U postgres -d hospital_dw < etl/schema.sql
+
+# 3. Run ETL — open 00_main.kjb in Pentaho Spoon and execute
+
+# 4. Build KPI mart
+pip install -r requirements.txt
+python etl/build_mart.py
+```
+
+Database: `localhost:5433` · user `postgres` · password `postgres123` · db `hospital_dw`
+
+---
+
+## Notes
+
+- `wait_minutes` is synthetically generated (source data has no wait time field)
+- Bed capacity (600) is assumed; the dataset does not include capacity data
+- Occupancy is computed as cumulative daily census: Σ admissions − Σ discharges
+
+---
+
+## Author
+
+Yanuar Arifin — Data Engineering, Semester 5
