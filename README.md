@@ -91,7 +91,7 @@ mart.kpi_okupansi_harian      -- daily bed occupancy
 
 ## Dashboard
 
-> Live: [Looker Studio](https://lookerstudio.google.com/LINK-DASHBOARD-LO-DI-SINI)
+> Live: [Looker Studio]((https://datastudio.google.com/reporting/1e04f2d2-1527-4adc-93f4-0ef93bd0f93a/page/tuTAG))
 
 ![Dashboard Overview](docs/screenshots/dashboard_overview.png)
 
