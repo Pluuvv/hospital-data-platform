@@ -129,4 +129,4 @@ Database: `localhost:5433` · user `postgres` · password `postgres123` · db `h
 
 ## Author
 
-Yanuar Arifin — Data Engineering, Semester 5
+Yanuar Arifin — Data Engineering
