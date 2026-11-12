@@ -231,6 +231,30 @@ Pipeline menerapkan beberapa rules data quality:
 
 ---
 
+## ⚙️ PDI ETL Flow
+
+Pipeline dibangun menggunakan **Pentaho Data Integration (Kettle)** dengan 1 Job utama yang mengorkestrasikan 3 Transformation secara berurutan.
+
+### `00_main.kjb` — Master Job
+![PDI Main Job](docs/screenshots/pdi_00_main_job.png)
+
+### `01_load_staging.ktr` — CSV → Staging
+Membaca raw CSV dan meload ke `stg.healthcare_raw` as-is tanpa transformasi.
+
+![PDI Load Staging](docs/screenshots/pdi_01_load_staging.png)
+
+### `02_load_dimensions.ktr` — Staging → Dimensi DW
+Populate 5 tabel dimensi: `dim_date`, `dim_patient`, `dim_condition`, `dim_admission_type`, `dim_insurance`. Menggunakan **Lookup** dan **Insert/Update** step untuk handle SCD Type 1.
+
+![PDI Load Dimensions](docs/screenshots/pdi_02_load_dimensions.png)
+
+### `03_load_fact.ktr` — Staging → Fact Table
+Join semua dimensi, filter billing negatif, hitung `length_of_stay`, lalu insert ke `fact_kunjungan`.
+
+![PDI Load Fact](docs/screenshots/pdi_03_load_fact.png)
+
+---
+
 ## 📝 Catatan Desain
 
 - **Staging Layer** menyimpan data as-is dari sumber (termasuk yang dirty) untuk auditability
