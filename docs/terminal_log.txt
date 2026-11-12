@@ -1,0 +1,431 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261004103023
+Username: LAPTOP-UTECVFEN\Rizkya Permata
+RunAs User: LAPTOP-UTECVFEN\Rizkya Permata
+Configuration Name: 
+Machine: LAPTOP-UTECVFEN (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\Rizkya Permata\AppData\Local\Programs\Microsoft VS Code\04c0d99f4f\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 2292
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is docs\terminal_log.txt
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv)    docker ps --filter "name=hospital-pg"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) FROM stg.healthcare_raw;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) FROM stg.healthcare_raw;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT min(date_of_admission), max(date_of_admission), count(*) FILTER (WHERE billing_amount < 0) AS billing_negatif FROM stg.healthcare_raw;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "TRUNCATE dw.fact_kunjungan, dw.dim_patient, dw.dim_condition, dw.dim_admission_type, dw.dim_insurance, dw.dim_date RESTART IDENTITY CASCADE;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*), min(full_date), max(full_date) FROM dw.dim_date;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'date' AS dim, count(*) FROM dw.dim_date UNION ALL SELECT 'condition', count(*) FROM dw.dim_condition UNION ALL SELECT 'admission_type', count(*) FROM dw.dim_admission_type UNION ALL SELECT 'insurance', count(*) FROM dw.dim_insurance;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'date' AS dim, count(*) FROM dw.dim_date UNION ALL SELECT 'condition', count(*) FROM dw.dim_condition UNION ALL SELECT 'admission_type', count(*) FROM dw.dim_admission_type UNION ALL SELECT 'insurance', count(*) FROM dw.dim_insurance;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT min(date_of_admission), max(date_of_admission), count(*) FILTER (WHERE billing_amount < 0) AS billing_negatif FROM stg.healthcare_raw;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "CREATE UNIQUE INDEX IF NOT EXISTS ux_dim_patient ON dw.dim_patient (name, age, gender, blood_type);"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) FROM dw.dim_patient;"
+docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT patient_key, name, age, gender, blood_type FROM dw.dim_patient ORDER BY patient_key LIMIT 5;"
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "COPY (SELECT * FROM stg.healthcare_raw WHERE billing_amount < 0) TO STDOUT WITH CSV HEADER" | Out-File docs\rejected_billing_negatif.csv -Encoding utf8
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "COPY (SELECT * FROM stg.healthcare_raw WHERE billing_amount < 0) TO STDOUT WITH CSV HEADER" | Out-File docs\rejected_billing_negatif.csv -Encoding utf8
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) (Get-Content docs\rejected_billing_negatif.csv).Count
+Get-Content docs\rejected_billing_negatif.csv -TotalCount 3
+109
+name,age,gender,blood_type,medical_condition,date_of_admission,doctor,hospital,insurance_provider,billing_amount,room_number,admission_type,discharge_date,medication,test_results,loaded_at
+ashLEy ERIcKSoN,32,Female,AB-,Cancer,2019-11-05,Gerald Hooper,"and Johnson Moore, Branch",Aetna,-502.51,376,Urgent,2019-11-23,Penicillin,Normal,2026-10-04 10:47:22.522376
+CHRisTOPHer wEiss,49,Female,AB-,Asthma,2023-02-16,Kelly Thompson,Hunter-Hughes,Aetna,-1018.25,204,Elective,2023-03-09,Penicillin,Inconclusive,2026-10-04 10:47:22.522376
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) AS baris, count(*) FILTER (WHERE patient_key IS NULL OR condition_key IS NULL OR admission_type_key IS NULL OR insurance_key IS NULL OR admission_date_key IS NULL OR discharge_date_key IS NULL) AS key_null, min(length_of_stay) AS los_min, max(length_of_stay) AS los_max, round(sum(billing_amount)::numeric,2) AS total_billing FROM dw.fact_kunjungan;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'stg' AS tabel, count(*) FROM stg.healthcare_raw UNION ALL SELECT 'dim_date', count(*) FROM dw.dim_date UNION ALL SELECT 'dim_patient', count(*) FROM dw.dim_patient UNION ALL SELECT 'dim_condition', count(*) FROM dw.dim_condition UNION ALL SELECT 'dim_admission_type', count(*) FROM dw.dim_admission_type UNION ALL SELECT 'dim_insurance', count(*) FROM dw.dim_insurance UNION ALL SELECT 'fact_kunjungan', count(*) FROM dw.fact_kunjungan;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "CREATE SCHEMA IF NOT EXISTS mart;"
+docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT table_name, string_agg(column_name, ', ' ORDER BY ordinal_position) AS kolom FROM information_schema.columns WHERE table_schema='dw' GROUP BY table_name ORDER BY table_name;"
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) python -c "import pandas as pd; from sqlalchemy import create_engine; e=create_engine('postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw'); print(pd.read_sql('SELECT count(*) AS n FROM dw.fact_kunjungan', e))"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) @'
+import pandas as pd
+from sqlalchemy import create_engine
+
+# ASUMSI: kapasitas total tempat tidur (dataset tidak punya data kapasitas)
+KAPASITAS_BED = 600
+
+engine = create_engine("postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw")
+
+SQL = """
+SELECT f.admission_id, f.wait_minutes, f.billing_amount,
+       d1.full_date AS tgl_masuk, d2.full_date AS tgl_keluar,
+       date_trunc('month', d1.full_date)::date AS bulan,
+       c.medical_condition, a.admission_type, i.insurance_provider
+FROM dw.fact_kunjungan f
+JOIN dw.dim_date d1 ON d1.date_key = f.admission_date_key
+JOIN dw.dim_date d2 ON d2.date_key = f.discharge_date_key
+JOIN dw.dim_condition c ON c.condition_key = f.condition_key
+JOIN dw.dim_admission_type a ON a.admission_type_key = f.admission_type_key
+JOIN dw.dim_insurance i ON i.insurance_key = f.insurance_key
+"""
+df = pd.read_sql(SQL, engine)
+df["tgl_masuk"] = pd.to_datetime(df["tgl_masuk"])
+df["tgl_keluar"] = pd.to_datetime(df["tgl_keluar"])
+df["bulan"] = pd.to_datetime(df["bulan"]).dt.date
+print("Baris dibaca dari dw:", len(df))
+
+kunjungan = (df.groupby(["bulan", "admission_type", "medical_condition"])
+               .size().reset_index(name="jumlah_kunjungan"))
+
+pendapatan = (df.groupby(["bulan", "insurance_provider"])
+                .agg(total_pendapatan=("billing_amount", "sum"),
+                     rata_rata_tagihan=("billing_amount", "mean"),
+                     jumlah_kunjungan=("admission_id", "count"))
+                .round(2).reset_index())
+
+tunggu = (df.groupby(["bulan", "admission_type"])
+            .agg(rata_waktu_tunggu_menit=("wait_minutes", "mean"),
+                 jumlah_kunjungan=("admission_id", "count"))
+            .round(1).reset_index())
+
+idx = pd.date_range(df["tgl_masuk"].min(), df["tgl_keluar"].max())
+masuk = df["tgl_masuk"].value_counts().reindex(idx, fill_value=0)
+keluar = df["tgl_keluar"].value_counts().reindex(idx, fill_value=0)
+dirawat = (masuk - keluar).cumsum()
+start = df["tgl_masuk"].min() + pd.Timedelta(days=30)
+end = df["tgl_masuk"].max()
+dirawat = dirawat[(dirawat.index >= start) & (dirawat.index <= end)]
+okupansi = pd.DataFrame({
+    "tanggal": dirawat.index.date,
+    "pasien_dirawat": dirawat.values,
+    "kapasitas_bed": KAPASITAS_BED,
+})
+okupansi["okupansi_pct"] = (okupansi["pasien_dirawat"] / KAPASITAS_BED * 100).round(2)
+
+hasil = {
+    "kpi_kunjungan_bulanan": kunjungan,
+    "kpi_pendapatan_bulanan": pendapatan,
+    "kpi_waktu_tunggu": tunggu,
+    "kpi_okupansi_harian": okupansi,
+}
+for nama, tabel in hasil.items():
+    tabel.to_sql(nama, engine, schema="mart", if_exists="replace", index=False)
+    print("mart." + nama, "->", len(tabel), "baris")
+'@ | python -
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'kunjungan_bulanan' AS tabel, count(*), sum(jumlah_kunjungan) AS total FROM mart.kpi_kunjungan_bulanan UNION ALL SELECT 'pendapatan_bulanan', count(*), round(sum(total_pendapatan),2) FROM mart.kpi_pendapatan_bulanan UNION ALL SELECT 'waktu_tunggu', count(*), sum(jumlah_kunjungan) FROM mart.kpi_waktu_tunggu UNION ALL SELECT 'okupansi_harian', count(*), round(avg(okupansi_pct),2) FROM mart.kpi_okupansi_harian;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'kunjungan_bulanan' AS tabel, count(*), sum(jumlah_kunjungan)::numeric AS total FROM mart.kpi_kunjungan_bulanan UNION ALL SELECT 'pendapatan_bulanan', count(*), round(sum(total_pendapatan)::numeric,2) FROM mart.kpi_pendapatan_bulanan UNION ALL SELECT 'waktu_tunggu', count(*), sum(jumlah_kunjungan)::numeric FROM mart.kpi_waktu_tunggu UNION ALL SELECT 'okupansi_harian', count(*), round(avg(okupansi_pct)::numeric,2) FROM mart.kpi_okupansi_harian;"
+       tabel        | count |     total
+--------------------+-------+---------------
+ kunjungan_bulanan  |  1098 |         54860
+ pendapatan_bulanan |   305 | 1404121599.97
+ waktu_tunggu       |   183 |         54860
+ okupansi_harian    |  1797 |         77.58
+(4 rows)
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker run -d -p 3000:3000 --name metabase metabase/metabase
+Unable to find image 'metabase/metabase:latest' locally
+latest: Pulling from metabase/metabase
+39426ebfd7ac: Downloading [==================>                                ]  225.4MB/603.1MB
+f99db5f04f89: Pull complete
+5adb22c6bb2b: Pull complete
+0a766f641652: Pull complete
+d35ca26035cc: Pull complete
+cea1e86c833d: Pull complete
+dd8b7f6bd209: Pull complete
+44136fa355b3: Already exists
+0c8af42be09a: Download complete
+(.venv) TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker rm -f metabase
+cea1e86c833d: Pull complete
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) python -c "import pandas as pd; from sqlalchemy import create_engine; e=create_engine('postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw'); [pd.read_sql('SELECT * FROM mart.'+t, e).to_csv('docs/'+t+'.csv', index=False) for t in ['kpi_kunjungan_bulanan','kpi_pendapatan_bulanan','kpi_waktu_tunggu','kpi_okupansi_harian']]; print('selesai')"
+Get-ChildItem docs\kpi_*.csv | Select-Object Name, Length
+
+
+Name                       Length
+----                       ------
+kpi_kunjungan_bulanan.csv   35922
+kpi_okupansi_harian.csv     46181
+kpi_pendapatan_bulanan.csv  13989
+kpi_waktu_tunggu.csv         5548
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) @'
+import os
+import pandas as pd
+from sqlalchemy import create_engine
+
+engine = create_engine("postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw")
+os.makedirs("docs/looker", exist_ok=True)
+
+nama = {
+    "bulan": "Bulan", "admission_type": "Tipe Admisi", "medical_condition": "Kondisi Medis",
+    "jumlah_kunjungan": "Jumlah Kunjungan", "insurance_provider": "Asuransi",
+    "total_pendapatan": "Total Pendapatan", "rata_rata_tagihan": "Rata Rata Tagihan",
+    "rata_waktu_tunggu_menit": "Rata Waktu Tunggu Menit", "tanggal": "Tanggal",
+    "pasien_dirawat": "Pasien Dirawat", "kapasitas_bed": "Kapasitas Bed",
+    "okupansi_pct": "Okupansi Persen",
+}
+for t in ["kpi_kunjungan_bulanan", "kpi_pendapatan_bulanan", "kpi_waktu_tunggu", "kpi_okupansi_harian"]:
+    df = pd.read_sql("SELECT * FROM mart." + t, engine).rename(columns=nama)
+    df.to_csv("docs/looker/" + t + ".csv", index=False)
+    print(t, list(df.columns))
+'@ | python -
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT round(avg(wait_minutes)::numeric,2) AS rata_waktu_tunggu FROM dw.fact_kunjungan;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT round((sum(rata_waktu_tunggu_menit*jumlah_kunjungan)/sum(jumlah_kunjungan))::numeric,2) AS berbobot, round(avg(rata_waktu_tunggu_menit)::numeric,2) AS rata_biasa, count(*) AS baris, sum(jumlah_kunjungan) AS total FROM mart.kpi_waktu_tunggu;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) @'
+import os
+import pandas as pd
+from sqlalchemy import create_engine
+
+engine = create_engine("postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw")
+SQL = """
+SELECT date_trunc('month', d.full_date)::date AS bulan,
+       a.admission_type,
+       count(*) AS jumlah_kunjungan,
+       sum(f.wait_minutes)::bigint AS total_menit_tunggu
+FROM dw.fact_kunjungan f
+JOIN dw.dim_date d ON d.date_key = f.admission_date_key
+JOIN dw.dim_admission_type a ON a.admission_type_key = f.admission_type_key
+GROUP BY 1, 2 ORDER BY 1, 2
+"""
+df = pd.read_sql(SQL, engine)
+df.to_sql("kpi_waktu_tunggu", engine, schema="mart", if_exists="replace", index=False)
+os.makedirs("docs/looker", exist_ok=True)
+df.to_csv("docs/looker/kpi_waktu_tunggu.csv", index=False)
+print(len(df), "baris |", df["jumlah_kunjungan"].sum(), "kunjungan |", df["total_menit_tunggu"].sum(), "menit")
+print("rata-rata berbobot:", round(df["total_menit_tunggu"].sum() / df["jumlah_kunjungan"].sum(), 2))
+'@ | python -
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) @'
+import os
+import pandas as pd
+from sqlalchemy import create_engine
+
+# ASUMSI: kapasitas total tempat tidur (dataset tidak punya data kapasitas)
+KAPASITAS_BED = 600
+
+engine = create_engine("postgresql+psycopg2://postgres:postgres123@localhost:5433/hospital_dw")
+
+SQL = """
+SELECT f.admission_id, f.wait_minutes, f.billing_amount,
+       d1.full_date AS tgl_masuk, d2.full_date AS tgl_keluar,
+       date_trunc('month', d1.full_date)::date AS bulan,
+       c.medical_condition, a.admission_type, i.insurance_provider
+FROM dw.fact_kunjungan f
+JOIN dw.dim_date d1 ON d1.date_key = f.admission_date_key
+JOIN dw.dim_date d2 ON d2.date_key = f.discharge_date_key
+JOIN dw.dim_condition c ON c.condition_key = f.condition_key
+JOIN dw.dim_admission_type a ON a.admission_type_key = f.admission_type_key
+JOIN dw.dim_insurance i ON i.insurance_key = f.insurance_key
+"""
+df = pd.read_sql(SQL, engine)
+df["tgl_masuk"] = pd.to_datetime(df["tgl_masuk"])
+df["tgl_keluar"] = pd.to_datetime(df["tgl_keluar"])
+df["bulan"] = pd.to_datetime(df["bulan"]).dt.date
+df["wait_minutes"] = df["wait_minutes"].astype(int)
+print("Baris dibaca dari dw:", len(df))
+
+kunjungan = (df.groupby(["bulan", "admission_type", "medical_condition"])
+               .size().reset_index(name="jumlah_kunjungan"))
+
+pendapatan = (df.groupby(["bulan", "insurance_provider"])
+                .agg(total_pendapatan=("billing_amount", "sum"),
+                     rata_rata_tagihan=("billing_amount", "mean"),
+                     jumlah_kunjungan=("admission_id", "count"))
+                .round(2).reset_index())
+
+# Waktu tunggu disimpan sebagai total menit (bilangan bulat), rata-rata dihitung di dashboard
+tunggu = (df.groupby(["bulan", "admission_type"])
+            .agg(jumlah_kunjungan=("admission_id", "count"),
+                 total_menit_tunggu=("wait_minutes", "sum"))
+            .reset_index())
+
+idx = pd.date_range(df["tgl_masuk"].min(), df["tgl_keluar"].max())
+masuk = df["tgl_masuk"].value_counts().reindex(idx, fill_value=0)
+keluar = df["tgl_keluar"].value_counts().reindex(idx, fill_value=0)
+dirawat = (masuk - keluar).cumsum()
+start = df["tgl_masuk"].min() + pd.Timedelta(days=30)
+end = df["tgl_masuk"].max()
+dirawat = dirawat[(dirawat.index >= start) & (dirawat.index <= end)]
+okupansi = pd.DataFrame({
+    "tanggal": dirawat.index.date,
+    "pasien_dirawat": dirawat.values,
+    "kapasitas_bed": KAPASITAS_BED,
+})
+okupansi["okupansi_pct"] = (okupansi["pasien_dirawat"] / KAPASITAS_BED * 100).round(2)
+
+hasil = {
+    "kpi_kunjungan_bulanan": kunjungan,
+    "kpi_pendapatan_bulanan": pendapatan,
+    "kpi_waktu_tunggu": tunggu,
+    "kpi_okupansi_harian": okupansi,
+}
+os.makedirs("docs/looker", exist_ok=True)
+for nama, tabel in hasil.items():
+    tabel.to_sql(nama, engine, schema="mart", if_exists="replace", index=False)
+    tabel.to_csv("docs/looker/" + nama + ".csv", index=False)
+    print("mart." + nama, "->", len(tabel), "baris")
+print("rata-rata waktu tunggu berbobot:", round(tunggu["total_menit_tunggu"].sum() / tunggu["jumlah_kunjungan"].sum(), 2))
+'@ | Set-Content -Encoding ASCII etl\build_mart.py
+python etl\build_mart.py
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20261004131839
+**********************
+**********************
+Windows PowerShell transcript start
+Start time: 20261004131919
+Username: LAPTOP-UTECVFEN\Rizkya Permata
+RunAs User: LAPTOP-UTECVFEN\Rizkya Permata
+Configuration Name: 
+Machine: LAPTOP-UTECVFEN (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\Rizkya Permata\AppData\Local\Programs\Microsoft VS Code\04c0d99f4f\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 2292
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is docs\terminal_log.txt
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) python --version; pip list 2>$null | Select-String "pandas|SQLAlchemy|psycopg2"
+
+
+
+pandas            3.0.6
+psycopg2-binary   2.9.13
+SQLAlchemy        2.1.3
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) python -c "import pandas as pd; df=pd.read_csv('data/raw/healthcare_dataset.csv'); print(df.shape); print(list(df.columns)); print('duplikat:', df.duplicated().sum()); print('billing negatif:', (df['Billing Amount']<0).sum()); print(df['Date of Admission'].min(), df['Date of Admission'].max())"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker ps --filter name=hospital-pg
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "\dt dw.*"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "\dt stg.*"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'stg' AS tabel, count(*) FROM stg.healthcare_raw UNION ALL SELECT 'dim_date', count(*) FROM dw.dim_date UNION ALL SELECT 'dim_patient', count(*) FROM dw.dim_patient UNION ALL SELECT 'dim_condition', count(*) FROM dw.dim_condition UNION ALL SELECT 'dim_admission_type', count(*) FROM dw.dim_admission_type UNION ALL SELECT 'dim_insurance', count(*) FROM dw.dim_insurance UNION ALL SELECT 'fact_kunjungan', count(*) FROM dw.fact_kunjungan;"
+       tabel        | count
+--------------------+-------
+ dim_insurance      |     5
+ dim_admission_type |     3
+ dim_condition      |     6
+ dim_date           |  1888
+ dim_patient        | 54944
+ fact_kunjungan     | 54860
+ stg                | 55500
+(7 rows)
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) AS baris, count(*) FILTER (WHERE patient_key IS NULL OR condition_key IS NULL OR admission_type_key IS NULL OR insurance_key IS NULL) AS key_null, min(length_of_stay) AS los_min, max(length_of_stay) AS los_max, round(sum(billing_amount)::numeric,2) AS total_billing FROM dw.fact_kunjungan;"
+Get-Item docs\rejected_billing_negatif.csv | Select-Object Name, Length
+Get-Content docs\rejected_billing_negatif.csv -TotalCount 4
+ baris | key_null | los_min | los_max | total_billing P5\hospital-pipeline>
+-------+----------+---------+---------+---------------
+ 54860 |        0 |       1 |      30 | 1404121599.97
+(1 row)
+
+Name                         Length
+----                         ------
+rejected_billing_negatif.csv    193
+name;age;gender;blood_type;medical_condition;date_of_admission;doctor;hospital;insurance_provider;billing_amount;room_number;admission_type;discharge_date;medication;test_results;wait_minutes
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT count(*) AS baris, count(*) FILTER (WHERE patient_key IS NULL OR condition_key IS NULL OR admission_type_key IS NULL OR insurance_key IS NULL) AS key_null, min(length_of_stay) AS los_min, max(length_of_stay) AS los_max, round(sum(billing_amount)::numeric,2) AS total_billing FROM dw.fact_kunjungan;"
+Get-Item docs\rejected_billing_negatif.csv | Select-Object Name, Length
+Get-Content docs\rejected_billing_negatif.csv -TotalCount 4
+ baris | key_null | los_min | los_max | total_billing
+-------+----------+---------+---------+---------------
+ 54860 |        0 |       1 |      30 | 1404121599.97
+(1 row)
+
+Name                         Length
+----                         ------
+rejected_billing_negatif.csv    193
+name;age;gender;blood_type;medical_condition;date_of_admission;doctor;hospital;insurance_provider;billing_amount;room_number;admission_type;discharge_date;medication;test_results;wait_minutes
+
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "COPY (SELECT * FROM stg.healthcare_raw WHERE billing_amount < 0) TO STDOUT WITH CSV HEADER" | Set-Content -Encoding ASCII docs\rejected_billing_negatif.csv
+(Get-Content docs\rejected_billing_negatif.csv | Measure-Object -Line).Lines
+Get-Content docs\rejected_billing_negatif.csv -TotalCount 4
+109
+name,age,gender,blood_type,medical_condition,date_of_admission,doctor,hospital,insurance_provider,billing_amount,room_number,admission_type,discharge_date,medication,test_results,loaded_at
+ashLEy ERIcKSoN,32,Female,AB-,Cancer,2019-11-05,Gerald Hooper,"and Johnson Moore, Branch",Aetna,-502.51,376,Urgent,2019-11-23,Penicillin,Normal,2026-10-04 13:26:58.074711
+CHRisTOPHer wEiss,49,Female,AB-,Asthma,2023-02-16,Kelly Thompson,Hunter-Hughes,Aetna,-1018.25,204,Elective,2023-03-09,Penicillin,Inconclusive,2026-10-04 13:26:58.074711
+AsHley WaRnER,60,Male,A+,Hypertension,2021-12-21,Andrea Bentley,"and Wagner, Lee Klein",Aetna,-306.36,426,Elective,2022-01-11,Ibuprofen,Normal,2026-10-04 13:26:58.154954
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+]633;D]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) Test-Path etl\build_mart.py
+True
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) python etl\build_mart.py
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B
+(.venv) docker exec hospital-pg psql -U postgres -d hospital_dw -c "SELECT 'kunjungan_bulanan' AS tabel, count(*), sum(jumlah_kunjungan)::numeric AS total FROM mart.kpi_kunjungan_bulanan UNION ALL SELECT 'pendapatan_bulanan', count(*), round(sum(total_pendapatan)::numeric,2) FROM mart.kpi_pendapatan_bulanan UNION ALL SELECT 'waktu_tunggu (rata2 menit)', count(*), round((sum(total_menit_tunggu)::numeric/sum(jumlah_kunjungan)),2) FROM mart.kpi_waktu_tunggu UNION ALL SELECT 'okupansi_harian (rata2 %)', count(*), round(avg(okupansi_pct)::numeric,2) FROM mart.kpi_okupansi_harian;"
+
+]633;D;0]633;A]633;P;Cwd=D:\x5cKuliah\x5cYanu\x5cSemester 5\x5cData Engineering\x5cP5\x5chospital-pipelinePS D:\Kuliah\Yanu\Semester 5\Data Engineering\P5\hospital-pipeline> ]633;B

@@ -1,0 +1,32 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual env archive (gede banget, ga perlu di-push)
+.venv.zip
+
+# PDI backup files
+*.ktr.bak
+*.kjb.bak
+
+# Database backup SQL (sensitif / gede)
+dw_backup_before_m3.sql
+
+# Logs (opsional, bisa di-push kalau mau tunjukin proof of work)
+# logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Env vars (kalau nanti ada)
+.env
+*.env

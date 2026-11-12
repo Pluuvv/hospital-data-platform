@@ -1,0 +1,63 @@
+2026/10/29 12:56:41 - Kitchen - Logging is at level : Basic
+2026/10/29 12:56:41 - Kitchen - Start of run.
+2026/10/29 12:56:50 - 00_main - Start of job execution
+2026/10/29 12:56:50 - 00_main - Starting entry [Membersihkan DW]
+2026/10/29 12:56:50 - 00_main - Starting entry [Load Dimenssions]
+2026/10/29 12:56:50 - Load Dimenssions - Using run configuration [Pentaho local]
+2026/10/29 12:56:50 - 02_load_dimensions - Dispatching started for transformation [02_load_dimensions]
+2026/10/29 12:56:50 - Table output 5.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:50 - Table output 3.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:50 - Table output 4.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:50 - Table output 2.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:50 - Table output.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:50 - Table input 2.0 - Finished reading query, closing connection
+2026/10/29 12:56:50 - Table input 3.0 - Finished reading query, closing connection
+2026/10/29 12:56:50 - Table input 4.0 - Finished reading query, closing connection
+2026/10/29 12:56:50 - Table input 4.0 - Finished processing (I=5, O=0, R=0, W=5, U=0, E=0)
+2026/10/29 12:56:50 - Table input 2.0 - Finished processing (I=6, O=0, R=0, W=6, U=0, E=0)
+2026/10/29 12:56:50 - Table input 3.0 - Finished processing (I=3, O=0, R=0, W=3, U=0, E=0)
+2026/10/29 12:56:50 - Table output 3.0 - Finished processing (I=0, O=3, R=3, W=3, U=0, E=0)
+2026/10/29 12:56:50 - Table output 4.0 - Finished processing (I=0, O=5, R=5, W=5, U=0, E=0)
+2026/10/29 12:56:50 - Table output 2.0 - Finished processing (I=0, O=6, R=6, W=6, U=0, E=0)
+2026/10/29 12:56:50 - Table input.0 - Finished reading query, closing connection
+2026/10/29 12:56:50 - Table input.0 - Finished processing (I=1888, O=0, R=0, W=1888, U=0, E=0)
+2026/10/29 12:56:51 - Table output.0 - Finished processing (I=0, O=1888, R=1888, W=1888, U=0, E=0)
+2026/10/29 12:56:51 - Table input 5.0 - linenr 50000
+2026/10/29 12:56:51 - Table input 5.0 - Finished reading query, closing connection
+2026/10/29 12:56:51 - Table input 5.0 - Finished processing (I=54944, O=0, R=0, W=54944, U=0, E=0)
+2026/10/29 12:56:51 - Table output 5.0 - linenr 50000
+2026/10/29 12:56:52 - Table output 5.0 - Finished processing (I=0, O=54944, R=54944, W=54944, U=0, E=0)
+2026/10/29 12:56:52 - 00_main - Starting entry [Load Fact]
+2026/10/29 12:56:52 - Load Fact - Using run configuration [Pentaho local]
+2026/10/29 12:56:52 - 03_load_fact - Dispatching started for transformation [03_load_fact]
+2026/10/29 12:56:52 - Table output.0 - Connected to database [hospital_dw] (commit=1000)
+2026/10/29 12:56:52 - Table input.0 - linenr 50000
+2026/10/29 12:56:52 - Unique rows (HashSet).0 - Linenr 50000
+2026/10/29 12:56:52 - Filter rows.0 - linenr 50000
+2026/10/29 12:56:52 - Calculator.0 - Linenr 50000
+2026/10/29 12:56:52 - Lookup pasien.0 - linenr 50000
+2026/10/29 12:56:52 - Table input.0 - Finished reading query, closing connection
+2026/10/29 12:56:52 - Table input.0 - Finished processing (I=55500, O=0, R=0, W=55500, U=0, E=0)
+2026/10/29 12:56:52 - Unique rows (HashSet).0 - Finished processing (I=0, O=0, R=55500, W=54966, U=0, E=534)
+2026/10/29 12:56:52 - Filter rows.0 - Finished processing (I=0, O=0, R=54966, W=54860, U=0, E=0)
+2026/10/29 12:56:52 - Calculator.0 - Finished processing (I=0, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:53 - Lookup pasien.0 - Finished processing (I=54944, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:53 - Lookup kondisi.0 - linenr 50000
+2026/10/29 12:56:53 - Lookup kondisi.0 - Finished processing (I=6, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:53 - Lookup tipe admisi.0 - linenr 50000
+2026/10/29 12:56:54 - Lookup tipe admisi.0 - Finished processing (I=3, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:54 - Lookup asuransi.0 - linenr 50000
+2026/10/29 12:56:54 - Lookup asuransi.0 - Finished processing (I=5, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:54 - Select values.0 - linenr 50000
+2026/10/29 12:56:54 - Select values.0 - Finished processing (I=0, O=0, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:55 - Table output.0 - linenr 50000
+2026/10/29 12:56:55 - Table output.0 - Finished processing (I=0, O=54860, R=54860, W=54860, U=0, E=0)
+2026/10/29 12:56:55 - 00_main - Starting entry [Success]
+2026/10/29 12:56:55 - 00_main - Finished job entry [Success] (result=[true])
+2026/10/29 12:56:55 - 00_main - Finished job entry [Load Fact] (result=[true])
+2026/10/29 12:56:55 - 00_main - Finished job entry [Load Dimenssions] (result=[true])
+2026/10/29 12:56:55 - 00_main - Finished job entry [Membersihkan DW] (result=[true])
+2026/10/29 12:56:55 - 00_main - Job execution finished
+2026/10/29 12:56:55 - Kitchen - Finished!
+2026/10/29 12:56:55 - Kitchen - Start=2026/10/29 12:56:50.295, Stop=2026/10/29 12:56:55.404
+2026/10/29 12:56:55 - Kitchen - Processing ended after 5 seconds.
