@@ -215,6 +215,22 @@ Pipeline menerapkan beberapa rules data quality:
 
 ---
 
+## 📸 Dashboard Preview
+
+> 🔗 **Live Dashboard:** [Buka di Looker Studio](https://lookerstudio.google.com/LINK-DASHBOARD-LO-DI-SINI)
+
+| Overview KPI | Tren Kunjungan |
+|---|---|
+| ![Overview KPI](docs/screenshots/dashboard_overview.png) | ![Tren Kunjungan](docs/screenshots/dashboard_kunjungan.png) |
+
+| Pendapatan per Asuransi | Okupansi Harian |
+|---|---|
+| ![Pendapatan](docs/screenshots/dashboard_pendapatan.png) | ![Okupansi](docs/screenshots/dashboard_okupansi.png) |
+
+> 📌 *Ganti link dan screenshot di atas dengan yang asli setelah dashboard selesai dibuat.*
+
+---
+
 ## 📝 Catatan Desain
 
 - **Staging Layer** menyimpan data as-is dari sumber (termasuk yang dirty) untuk auditability
