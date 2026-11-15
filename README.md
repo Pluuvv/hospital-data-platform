@@ -130,9 +130,21 @@ docker exec -i hospital-pg psql -U postgres -d hospital_dw < etl/schema.sql
 # 4. Build KPI mart
 pip install -r requirements.txt
 python etl/build_mart.py
+
+# 5. Configure and run data quality checks (Python reads settings from .env)
+Copy-Item .env.example .env
+# Edit .env with the database credentials. Use an account that can read stg/dw
+# and create/replace mart.dq_results; do not use the dashboard's u_manajemen account.
+python dq_checks_pg.py
+# Or run the SQL script with psql (it will prompt for a password if needed):
+psql -h localhost -p 5433 -U postgres -d hospital_dw -f dq_checks_pg.sql
 ```
 
 Database: `localhost:5433` · user `postgres` · password `postgres123` · db `hospital_dw`
+
+The SQL and Python runners use the same 16 checks and replace the previous snapshot in `mart.dq_results`. They do not update or delete records in `stg` or `dw`, and return a non-zero exit status if any check fails. The fixed row-count targets and synthetic `wait_minutes` ranges are specific to this project dataset.
+
+For Neon, set the connection values in `.env` and use `DB_SSLMODE=require`.
 
 ---
 
