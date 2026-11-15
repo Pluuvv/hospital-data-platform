@@ -118,6 +118,8 @@ All four headline KPIs were reconciled directly against the database after pipel
 
 **Prerequisites:** Docker Desktop, Python 3.10+, Pentaho Spoon 9.x
 
+For the full Windows setup, including the Pentaho path adjustments, see [docs/database-setup.md](docs/database-setup.md).
+
 ```bash
 # 1. Start database (local dev only — credentials below are not for production)
 docker compose up -d
